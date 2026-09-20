@@ -1,5 +1,7 @@
 # deal-intel-rag
 
+[![CI](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml?query=branch%3Amain)
+
 A local RAG tool for GTM teams. It answers questions from internal battlecards,
 security docs, and pricing (with exact citations) and refuses when the corpus
 does not actually contain the answer.

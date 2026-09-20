@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import re
 from pathlib import Path
@@ -65,10 +66,8 @@ def get_collection(settings: Settings, reset: bool = False) -> Collection:
     """Open (or create) the persistent collection, configured for cosine distance."""
     client = chromadb.PersistentClient(path=str(settings.persist_dir))
     if reset:
-        try:
+        with contextlib.suppress(Exception):
             client.delete_collection(settings.collection)
-        except Exception:  # noqa: BLE001 - an absent collection is not an error
-            pass
     return client.get_or_create_collection(
         name=settings.collection, metadata={"hnsw:space": "cosine"}
     )

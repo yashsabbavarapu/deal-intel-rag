@@ -43,7 +43,7 @@ class Settings(BaseModel):
     model_config = {"frozen": True}
 
     @classmethod
-    def from_env(cls, **overrides: object) -> "Settings":
+    def from_env(cls, **overrides: object) -> Settings:
         env = {
             field: cast(raw)
             for field, (var, cast) in _ENV.items()

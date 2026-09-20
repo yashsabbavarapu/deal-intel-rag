@@ -35,7 +35,7 @@ def run(cases: list[Case]) -> int:
     for case in cases:
         try:
             answer = retriever.answer(case.question)
-        except Exception as exc:  # noqa: BLE001 - an API failure is a result here
+        except Exception as exc:
             failures.append(f"{case.question}: {exc}")
             print(f"[ERROR] {case.category:13} | {case.question}\n         {exc}\n")
             continue
@@ -46,7 +46,7 @@ def run(cases: list[Case]) -> int:
             ok = False
         nearest = min((m.distance for m in answer.matches), default=9.0)
         print(f"[{'PASS' if ok else 'FAIL'}] {case.category:13} d={nearest:.3f} "
-              f"refused={str(answer.refused):5} | {case.question}")
+              f"refused={answer.refused!s:5} | {case.question}")
         if case.note:
             print(f"         expect: {case.note}")
         print(f"         -> {answer.text[:220].replace(chr(10), ' ')}")

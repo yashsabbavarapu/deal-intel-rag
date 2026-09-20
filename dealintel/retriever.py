@@ -5,7 +5,8 @@ from __future__ import annotations
 import random
 import re
 import time
-from typing import Callable, Protocol
+from collections.abc import Callable
+from typing import Protocol
 
 import httpx
 
@@ -188,6 +189,7 @@ class Retriever:
             (found.get("ids") or [[]])[0],
             (found.get("metadatas") or [[]])[0],
             (found.get("distances") or [[]])[0],
+            strict=False,
         ):
             meta = meta or {}
             heading, body = str(meta.get("heading", "")), str(meta.get("text", ""))

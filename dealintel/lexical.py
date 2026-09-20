@@ -13,10 +13,12 @@ from collections import Counter
 from dataclasses import dataclass, field
 
 STOPWORDS = frozenset(
-    """a an the is are was were do does did we our us you your i what when where which
-    who whom how why can could should would will shall may might must of for to in on
-    at by with from about as and or if it its this that these those have has had be
-    been being not no any all""".split()
+    [
+        "a", "an", "the", "is", "are", "was", "were", "do", "does", "did", "we", "our", "us", "you", "your", "i", "what",
+        "when", "where", "which", "who", "whom", "how", "why", "can", "could", "should", "would", "will", "shall", "may",
+        "might", "must", "of", "for", "to", "in", "on", "at", "by", "with", "from", "about", "as", "and", "or", "if", "it",
+        "its", "this", "that", "these", "those", "have", "has", "had", "be", "been", "being", "not", "no", "any", "all"
+    ]
 )
 
 # Crude suffix stripping so "displace" matches "Displacement". A real stemmer is
@@ -50,7 +52,7 @@ class LexicalIndex:
     heading_weight: float = 2.0
 
     @classmethod
-    def build(cls, documents: list[str]) -> "LexicalIndex":
+    def build(cls, documents: list[str]) -> LexicalIndex:
         freq: Counter[str] = Counter()
         for doc in documents:
             freq.update(set(tokenize(doc)))

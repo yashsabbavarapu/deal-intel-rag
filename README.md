@@ -1,7 +1,7 @@
 # deal-intel-rag
 
 A local RAG tool for GTM teams. It answers questions from internal battlecards,
-security docs, and pricing — with exact citations — and refuses when the corpus
+security docs, and pricing (with exact citations) and refuses when the corpus
 does not actually contain the answer.
 
 ## Setup
@@ -31,8 +31,8 @@ Each ingest stores a content fingerprint on the collection. Two failure modes ar
 kept distinct, because both would otherwise surface as the refusal sentence and
 read as an authoritative "the docs don't cover this":
 
-- **No index** — `ask` exits 2 with "the index is empty. Run ... ingest".
-- **Stale index** — `data/` has changed since the last ingest. `ask` warns on
+- **No index**. `ask` exits 2 with "the index is empty. Run ... ingest".
+- **Stale index**. `data/` has changed since the last ingest. `ask` warns on
   stderr and still answers, so a stale corpus degrades loudly rather than silently.
 
 The answer goes to stdout and diagnostics to stderr, so `ask ... > answer.txt`
@@ -46,13 +46,13 @@ this key, 5 calls each:
 | Model | Result | Latency |
 |-------|--------|---------|
 | `gemini-3.5-flash-lite` | 10/10 OK | ~5s |
-| `gemini-3.5-flash` | 2/10 OK — 6x `429`, 2x `503` under load | ~11s |
+| `gemini-3.5-flash` | 2/10 OK, 6x `429`, 2x `503` under load | ~11s |
 | `gemini-flash-latest` | 2/5 OK, 3x `403` | ~6s |
-| `gemini-2.5-flash` | `404` — "no longer available to new users" | — |
+| `gemini-2.5-flash` | `404`, "no longer available to new users" |, |
 
 Two findings drove this. `gemini-flash-latest` is an alias resolving to different
 backends per call, some of which this project lacks permission for. And
-`gemini-3.5-flash` hits a hard quota wall under sustained use — with single small
+`gemini-3.5-flash` hits a hard quota wall under sustained use, with single small
 requests it looked fine at 5/5, but with real RAG-sized payloads back to back it
 dropped to 2/10. A first pass of the live suite lost 5 of 16 questions to `403`s
 and a timeout because of this.
@@ -61,7 +61,7 @@ So requests retry transient statuses (408, 429, 500, 502, 503, 504) with
 exponential backoff and full jitter, and then fall back across
 `fallback_models` in order, because quota and availability differ per model.
 Permission and not-found errors skip straight to the next model rather than
-burning retries. The API's own message is surfaced verbatim — a bare status code
+burning retries. The API's own message is surfaced verbatim. A bare status code
 hides the part that tells you what to fix. With this in place the live suite runs
 16/16 with no API errors.
 
@@ -87,7 +87,7 @@ Three independent gates must all pass before an answer is shown:
    against the chunks actually supplied. An answer citing nothing, or citing a
    section that was not in context, is converted to a refusal.
 
-**The gates are not redundant — gate 1 provably cannot do the job alone.** Run
+The gates are not redundant. Gate 1 provably cannot do the job alone. Run
 `python -m eval.calibrate` and it reports, on this corpus:
 
 ```
@@ -97,7 +97,7 @@ OVERLAP of 0.110: no threshold separates these sets.
 ```
 
 Plainly out-of-domain questions are easy (0.83–0.96). The overlap comes from
-*near-domain* questions — "What is our parental leave policy?" (0.726), "How many
+*near-domain* questions. "What is our parental leave policy?" (0.726), "How many
 engineers are on the platform team?" (0.590). They are shaped like internal
 questions, so they land among the real ones and no threshold can split them.
 Gates 2 and 3 are what refuse those, and they do: verified live.
@@ -146,14 +146,14 @@ Measured end to end against the real API (`gemini-3.5-flash-lite`), 16 questions
 | Out-of-domain (3) | Refused |
 
 The false-premise cases are the interesting ones. *"Are we HITRUST CSF
-certified?"* returns "No, we are not HITRUST CSF certified" — the docs say so
+certified?"* returns "No, we are not HITRUST CSF certified". The docs say so
 explicitly, and a model leaning on outside knowledge tends to say yes. *"Can we
 sign a BAA on the Growth plan?"* is likewise answered "no" from the tier rule
 rather than refused. *"What is the discount on a 5-year term?"* is refused: only
 12/24/36-month terms exist, so there is no figure to give.
 
 The near-domain gap is closed in practice. *"What is our parental leave policy?"*
-scores 0.726 and passes the distance gate, but the model refuses it — which is
+scores 0.726 and passes the distance gate, but the model refuses it, which is
 exactly the division of labour the three gates are meant to provide.
 
 ### Prompt injection
@@ -172,12 +172,12 @@ the system prompt; `test_excerpts_are_framed_as_data_not_instructions` guards th
 in place of the heading. Strict verification turned a correct answer into a
 refusal. Fixed by listing the legal citation strings in the prompt
 (`--- VALID CITATIONS ---`) and by repairing a mangled heading when the cited
-file contributed exactly one chunk — never when it contributed several, since
+file contributed exactly one chunk, never when it contributed several, since
 that would be guessing.
 
 ## Evaluation
 
-The labelled question sets live in `eval/questions.py` — edit them when the
+The labelled question sets live in `eval/questions.py`, edit them when the
 corpus changes.
 
 ```bash

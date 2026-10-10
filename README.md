@@ -1,6 +1,6 @@
 # deal-intel-rag
 
-[![CI](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/yashsabbavarapu/deal-intel-rag/actions/workflows/ci.yml?query=branch%3Amain) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
 A local RAG tool for GTM teams. It answers questions from internal battlecards,
 security docs, and pricing (with exact citations) and refuses when the corpus

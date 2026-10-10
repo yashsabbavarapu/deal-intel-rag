@@ -124,6 +124,13 @@ On a 15-question labelled set this moved top-3 recall from 12/15 to 15/15. The
 guardrail always uses the true cosine distance, so the rerank can never rescue an
 out-of-domain question. Set `DEALINTEL_LEXICAL_WEIGHT=0` to disable it.
 
+## What v1 does NOT do
+
+- It does not update itself. The corpus is fixed at ingest time; new battlecards mean re-running `ingest`.
+- It does not separate near-domain questions by distance. The calibrator proves no threshold can; gates 2 and 3 do that work, and they need a model call.
+- It is not a hosted service. It is a CLI and a library you run where your docs live.
+- It does not fix a bad corpus. Wrong docs in, wrong answers out, just with citations attached.
+
 ## Layout
 
 | Path | Role |
